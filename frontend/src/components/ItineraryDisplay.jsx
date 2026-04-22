@@ -113,7 +113,7 @@ export default function ItineraryDisplay({ trip }) {
                 style={{ background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.3)', color: '#a78bfa' }}>
                 🔗 Share Trip
               </button>
-              <button onClick={() => exportItineraryPDF(trip)}
+              <button onClick={() => { try { exportItineraryPDF(trip); } catch(e) { alert('PDF export failed: ' + e.message); } }}
                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:scale-105"
                 style={{ background: 'rgba(6,182,212,0.12)', border: '1px solid rgba(6,182,212,0.25)', color: '#67e8f9' }}>
                 📄 Download PDF

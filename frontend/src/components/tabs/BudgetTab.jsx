@@ -8,8 +8,9 @@ const META = {
   miscellaneous: { icon: '🎒', color: '#8b5cf6' },
 };
 
-function parseNum(str) {
-  return parseInt((str || '').replace(/[^0-9]/g, '')) || 0;
+function parseNum(val) {
+  if (typeof val === 'number') return Math.round(val);
+  return parseInt((String(val || '')).replace(/[^0-9.]/g, '')) || 0;
 }
 
 function AnimatedNumber({ value }) {

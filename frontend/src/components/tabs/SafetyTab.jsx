@@ -9,10 +9,13 @@ const RATING_CONFIG = {
 };
 
 export default function SafetyTab({ itinerary }) {
-  const hs  = itinerary.healthSafety    || {};
+  const hs  = itinerary.healthSafety     || {};
   const ec  = itinerary.emergencyContacts || {};
-  const vi  = itinerary.visaInfo        || {};
-  const rating = parseInt(hs.safetyRating) || 4;
+  const vi  = itinerary.visaInfo         || {};
+  const rating = Math.min(5, Math.max(1, parseInt(hs.safetyRating) || 4));
+  const vaccinations = Array.isArray(hs.vaccinations) ? hs.vaccinations : [];
+  const commonScams  = Array.isArray(hs.commonScams)  ? hs.commonScams  : [];
+  const safetyTips   = Array.isArray(hs.safetyTips)   ? hs.safetyTips   : [];
   const rcfg = RATING_CONFIG[rating] || RATING_CONFIG[4];
 
   return (
@@ -68,12 +71,12 @@ export default function SafetyTab({ itinerary }) {
       {/* Health grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Vaccinations */}
-        {hs.vaccinations?.length > 0 && (
+        {vaccinations.length > 0 && (
           <TiltCard intensity={4}>
             <div className="glass-card rounded-2xl p-6 h-full">
               <h3 className="font-bold text-white text-sm mb-3 flex items-center gap-2">💉 Recommended Vaccinations</h3>
               <div className="space-y-2">
-                {hs.vaccinations.map((v, i) => (
+                {vaccinations.map((v, i) => (
                   <div key={i} className="flex items-start gap-2.5 text-sm text-white/50">
                     <span className="text-emerald-400 mt-0.5 flex-shrink-0">✓</span> {v}
                   </div>
@@ -97,11 +100,11 @@ export default function SafetyTab({ itinerary }) {
       </div>
 
       {/* Common scams */}
-      {hs.commonScams?.length > 0 && (
+      {commonScams.length > 0 && (
         <div className="glass-card rounded-2xl p-6">
           <h3 className="font-bold text-white text-sm mb-4 flex items-center gap-2">⚠️ Common Scams to Watch Out For</h3>
           <div className="space-y-3">
-            {hs.commonScams.map((scam, i) => (
+            {commonScams.map((scam, i) => (
               <div key={i} className="flex items-start gap-3 p-3 rounded-xl text-sm"
                 style={{ background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.12)' }}>
                 <span className="text-yellow-400 flex-shrink-0 mt-0.5">⚠️</span>
@@ -113,11 +116,11 @@ export default function SafetyTab({ itinerary }) {
       )}
 
       {/* Safety tips */}
-      {hs.safetyTips?.length > 0 && (
+      {safetyTips.length > 0 && (
         <div className="glass-card rounded-2xl p-6">
           <h3 className="font-bold text-white text-sm mb-4 flex items-center gap-2">✅ Safety Tips</h3>
           <div className="space-y-2.5">
-            {hs.safetyTips.map((tip, i) => (
+            {safetyTips.map((tip, i) => (
               <div key={i} className="flex items-start gap-3 text-sm">
                 <span className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">{i+1}</span>
                 <span className="text-white/60 leading-relaxed">{tip}</span>
