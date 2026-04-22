@@ -1,8 +1,15 @@
+import { getToken } from '../contexts/AuthContext';
+
 const BASE = '/api/v1';
 
 async function request(path, options = {}) {
+  const token = getToken();
   const res = await fetch(`${BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...options.headers },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...options.headers
+    },
     ...options,
     body: options.body !== undefined ? JSON.stringify(options.body) : undefined
   });
@@ -24,4 +31,9 @@ export const tripsApi = {
   create: (data) => request('/trips', { method: 'POST', body: data }),
   getById: (id) => request(`/trips/${id}`),
   list: () => request('/trips')
+};
+
+export const authApi = {
+  signup: (data) => request('/auth/signup', { method: 'POST', body: data }),
+  login: (data) => request('/auth/login', { method: 'POST', body: data })
 };

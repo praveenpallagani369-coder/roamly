@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { tripsApi } from '../api/client';
+import { useAuth } from '../contexts/AuthContext';
 import TripForm from '../components/TripForm';
 import RecentTrips from '../components/RecentTrips';
 
 export default function Home() {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({});
@@ -49,15 +51,34 @@ export default function Home() {
 
       {/* Header */}
       <header className="relative z-10 glass" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <div className="max-w-6xl mx-auto px-6 py-5 flex items-center gap-3">
-          <div className="relative">
-            <div className="absolute inset-0 rounded-full animate-pulse-glow" />
-            <span className="text-3xl relative">🌍</span>
+        <div className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="absolute inset-0 rounded-full animate-pulse-glow" />
+              <span className="text-3xl relative">🌍</span>
+            </div>
+            <div>
+              <span className="text-xl font-black tracking-tight text-white">Roamly</span>
+              <span className="ml-3 text-xs text-white/30 font-medium">AI Travel Planner</span>
+            </div>
           </div>
-          <div>
-            <span className="text-xl font-black tracking-tight text-white">Roamly</span>
-            <span className="ml-3 text-xs text-white/30 font-medium">AI Travel Planner</span>
-          </div>
+          {user && (
+            <div className="flex items-center gap-3">
+              <div className="text-right hidden sm:block">
+                <div className="text-sm font-semibold text-white">{user.firstName} {user.lastName}</div>
+                <div className="text-xs text-white/40">{user.email}</div>
+              </div>
+              <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white"
+                style={{ background: 'linear-gradient(135deg, #7c3aed, #06b6d4)' }}>
+                {user.firstName[0]}{user.lastName[0]}
+              </div>
+              <button onClick={() => { logout(); navigate('/login'); }}
+                className="text-xs text-white/40 hover:text-white/70 transition-colors px-3 py-1.5 rounded-xl"
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                Sign out
+              </button>
+            </div>
+          )}
         </div>
       </header>
 

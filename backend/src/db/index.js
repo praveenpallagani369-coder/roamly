@@ -22,8 +22,18 @@ function getDb() {
 
 function initSchema() {
   db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id         TEXT PRIMARY KEY,
+      first_name TEXT NOT NULL,
+      last_name  TEXT NOT NULL,
+      email      TEXT NOT NULL UNIQUE,
+      password   TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS trips (
       id             TEXT PRIMARY KEY,
+      user_id        TEXT REFERENCES users(id),
       destination    TEXT NOT NULL,
       start_date     TEXT NOT NULL,
       end_date       TEXT NOT NULL,
@@ -36,6 +46,16 @@ function initSchema() {
     CREATE INDEX IF NOT EXISTS idx_trips_destination ON trips(destination);
     CREATE INDEX IF NOT EXISTS idx_trips_created_at  ON trips(created_at);
   `);
+
+  // Migrate existing trips table if user_id column is missing
+  try {
+    db.exec('ALTER TABLE trips ADD COLUMN user_id TEXT REFERENCES users(id)');
+  } catch (_) {
+    // Column already exists — ignore
+  }
+
+  // Index on user_id — must be after migration so column exists
+  db.exec('CREATE INDEX IF NOT EXISTS idx_trips_user_id ON trips(user_id)');
 }
 
 module.exports = { getDb };
