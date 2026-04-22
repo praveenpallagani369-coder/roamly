@@ -7,9 +7,12 @@ import PackingTab    from './tabs/PackingTab';
 import PhrasesTab    from './tabs/PhrasesTab';
 import SafetyTab     from './tabs/SafetyTab';
 import BookingTab    from './tabs/BookingTab';
+import MapTab        from './tabs/MapTab';
+import { exportItineraryPDF } from '../utils/exportPDF';
 
 const TABS = [
   { id: 'overview',  label: 'Overview',    icon: '🗺️' },
+  { id: 'map',       label: 'Map',         icon: '📌' },
   { id: 'places',    label: 'Top Places',  icon: '📍' },
   { id: 'itinerary', label: 'Day by Day',  icon: '📅' },
   { id: 'budget',    label: 'Budget',      icon: '💰' },
@@ -104,16 +107,16 @@ export default function ItineraryDisplay({ trip }) {
               ))}
             </div>
 
-            <div className="flex gap-3 mt-5">
+            <div className="flex gap-3 mt-5 flex-wrap">
               <button onClick={handleShare}
                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:scale-105"
                 style={{ background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.3)', color: '#a78bfa' }}>
                 🔗 Share Trip
               </button>
-              <button onClick={() => window.print()}
+              <button onClick={() => exportItineraryPDF(trip)}
                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:scale-105"
                 style={{ background: 'rgba(6,182,212,0.12)', border: '1px solid rgba(6,182,212,0.25)', color: '#67e8f9' }}>
-                🖨️ Print
+                📄 Download PDF
               </button>
             </div>
           </div>
@@ -132,6 +135,7 @@ export default function ItineraryDisplay({ trip }) {
 
         {/* Tab content */}
         {activeTab === 'overview'  && <OverviewTab   itinerary={itinerary} />}
+        {activeTab === 'map'       && <MapTab        itinerary={itinerary} />}
         {activeTab === 'places'    && <PlacesTab     itinerary={itinerary} tripId={tripId} destination={destination} />}
         {activeTab === 'itinerary' && <ItineraryTab  itinerary={itinerary} tripId={tripId} destination={destination} />}
         {activeTab === 'budget'    && <BudgetTab     itinerary={itinerary} budget={budget} />}
